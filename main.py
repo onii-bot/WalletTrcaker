@@ -17,7 +17,7 @@ ADDRESS_LIST = collection.find_one({"_id": 0})['wallets']
 FUNCTIONS = ['contribute']
 
 # Discord webhook URL
-WEBHOOK_URL = os.environ["WEBHOOK"}
+WEBHOOK_URL = os.environ["WEBHOOK"]
 
 def send_discord_webhook_embed(tx):
     eth_value = float(tx['value']) / 1e18  # Convert value from wei to ETH
