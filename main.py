@@ -66,7 +66,7 @@ def check_transactions(address):
 
 
 while True:
-    ADDRESS_LIST = collection.find_one({"_id": 0})['wallets']
+    ADDRESS_LIST = list(collection.find_one({"_id": 0})['wallets'].keys())
     print(ADDRESS_LIST)
     for address in ADDRESS_LIST:
         # Check if the wallet address is already present in last_checked_txs
