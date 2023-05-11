@@ -14,15 +14,17 @@ ETHERSCAN_API_KEY = os.environ["ETHERSCAN_API"]
 ADDRESS_LIST = collection.find_one({"_id": 0})['wallets']
 
 # Define the function names to monitor
-FUNCTIONS = ['contribute']
+FUNCTIONS = ['contribute', 'transfer']
 
 # Discord webhook URL
 WEBHOOK_URL = os.environ["WEBHOOK"]
 
-def send_discord_webhook_embed(tx, nickname):
+def send_discord_webhook_embed(tx, nickname, function_name):
     eth_value = float(tx['value']) / 1e18  # Convert value from wei to ETH
     transaction_link = f'https://etherscan.io/tx/{tx["hash"]}'
     message = f'{nickname} minted {eth_value:.6f}Ξ on contract 0x....\n'
+    if function_name == "transfer":
+        message = f'{nickname} transferred to {tx["to"]}\n'
     webhook = DiscordWebhook(url=WEBHOOK_URL)
     embed = DiscordEmbed(color=000000,title=message)
     embed.add_embed_field(name='Transaction', value=f'[View on Etherscan]({transaction_link})', inline=False)
@@ -60,7 +62,7 @@ def check_transactions(address):
                     print(f'{function_name} function called by {tx["from"]} on contract {tx["to"]} with transaction hash {tx["hash"]} using {eth_value:.6f} ETH')
                     datas = collection.find_one({"_id": 0})
                     nickname = datas["wallets"][tx["from"].lower()]
-                    send_discord_webhook_embed(tx, nickname)
+                    send_discord_webhook_embed(tx, nickname, function_name)
             processed_txs.add(tx['hash'])
     last_checked_txs[address] = tx_list[0]['hash'] if tx_list else None
 
